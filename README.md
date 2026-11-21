@@ -117,20 +117,7 @@ $$\text{Score} = (\text{Resolution Rate} \times 0.40) + (\text{SLA Compliance} \
 
 ---
 
-## 🎯 3-Minute Pitch Script for Hackathon Judges
 
-* **0:00 – 0:30 (The Hook & Problem)**:
-  "Good afternoon, judges. Today, when a citizen in Mumbai encounters a dangerous open manhole or water leak, reporting it feels like throwing a message in a bottle into an administrative black hole. Tickets disappear, SLAs are ignored, and contractors mark tickets 'Resolved' without lifting a shovel."
-* **0:30 – 1:15 (Multimodal AI in Action)**:
-  "With CivicWatch, reporting takes 5 seconds. Open `report.html`. A citizen clicks 'Voice Note' and speaks in Marathi or Hindi, or snaps a photo. Watch our Multimodal Gemini engine analyze the scene in real time. It rates the hazard as **Severity 10/10 High Risk**, translates the Marathi voice note into English, and routes it directly to BMC Storm Water Drains. The citizen sees our 'AI Understood This As…' card before submitting."
-* **1:15 – 1:55 (Geo-Intelligence & Anti-Duplicate)**:
-  "If another citizen reports the same defect 40 meters away, CivicWatch detects the proximity cluster, prompts them to upvote, and merges their evidence into the active ticket—escalating municipal priority instead of spamming the database."
-* **1:55 – 2:35 (Public Transparency & AI Proof-of-Fix)**:
-  "On `issues.html`, the public sees our interactive Mumbai map with color-coded severity markers, heatmap density hotspots, and live SLA countdowns. Overdue tickets show red breach warnings. When an officer logs into `admin.html` and tries to close the ticket as 'Resolved', our system demands an 'After' completion photo. Gemini compares the before and after images. Only when the AI confirms the hole is filled does the status change to 'Resolved'; otherwise, it is flagged as 'Fix Disputed'."
-* **2:35 – 3:00 (Citizen Empowerment & Impact)**:
-  "If the municipality delays, citizens have a one-click 'Escalate via RTI' button that auto-drafts a formal Right to Information notice in English and Marathi ready to file. CivicWatch turns every citizen into an empowered auditor of their city's infrastructure."
-
----
 
 ## 🚀 Quickstart & Setup Guide
 
