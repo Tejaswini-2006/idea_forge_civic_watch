@@ -141,7 +141,7 @@ $$\text{Score} = (\text{Resolution Rate} \times 0.40) + (\text{SLA Compliance} \
 ### 2. Run Locally
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/civicwatch.git
+git clone https://github.com/Tejaswini-2006/idea_forge_civic_watch
 cd civicwatch
 
 # Serve static files on port 8080 (Python or Node)
