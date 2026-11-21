@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Grievance Ledger & Heatmap | CivicWatch</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet & Heatmap CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">CIVIC<span>WATCH</span></a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="report.html">Report Issue</a>
+                <a href="issues.html" class="active">View Issues</a>
+                <a href="admin.html">Officer Portal</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="dashboard-container">
+        
+        <!-- HEADER & FILTER TOOLBAR -->
+        <div class="ledger-header" style="margin-bottom:2rem;">
+            <div>
+                <span class="badge-tag">Open Municipal Data</span>
+                <h1>Public Civic Grievance Ledger</h1>
+                <p style="color:#64748b; font-size:0.95rem;">
+                    Transparently tracking complaints, SLA countdowns, and verified municipal resolutions across Mumbai.
+                </p>
+            </div>
+
+            <!-- FILTER CONTROLS -->
+            <div class="filter-toolbar" style="margin-top:1.2rem; display:flex; flex-wrap:wrap; gap:10px; background:#fff; padding:1rem; border-radius:12px; box-shadow:var(--shadow);">
+                <select id="filterWard" class="filter-select">
+                    <option value="">All Mumbai Wards</option>
+                    <option value="Ward A">Ward A (Colaba, Fort)</option>
+                    <option value="Ward C">Ward C (Marine Lines)</option>
+                    <option value="Ward D">Ward D (Malabar Hill)</option>
+                    <option value="Ward G/N">Ward G/North (Dadar, Dharavi)</option>
+                    <option value="Ward H/W">Ward H/West (Bandra, Khar)</option>
+                    <option value="Ward K/E">Ward K/East (Andheri East)</option>
+                    <option value="Ward K/W">Ward K/West (Andheri West)</option>
+                    <option value="Ward S">Ward S (Powai, Bhandup)</option>
+                </select>
+
+                <select id="filterType" class="filter-select">
+                    <option value="">All Categories</option>
+                    <option value="Pothole">Pothole</option>
+                    <option value="Garbage Overflow">Garbage Overflow</option>
+                    <option value="Broken Streetlight">Broken Streetlight</option>
+                    <option value="Open Manhole">Open Manhole</option>
+                    <option value="Water Leakage">Water Leakage</option>
+                    <option value="Sewage">Sewage</option>
+                </select>
+
+                <select id="filterStatus" class="filter-select">
+                    <option value="">All Statuses</option>
+                    <option value="Reported">Reported</option>
+                    <option value="Acknowledged">Acknowledged</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Resolved">Resolved</option>
+                    <option value="Fix Disputed">Fix Disputed</option>
+                </select>
+
+                <select id="sortOrder" class="filter-select">
+                    <option value="priority">Sort: Highest Priority Score</option>
+                    <option value="reports">Sort: Most Endorsements</option>
+                    <option value="newest">Sort: Most Recent</option>
+                </select>
+
+                <button type="button" id="btnSeedDemo" class="btn btn-sm btn-primary" style="margin-left:auto;">
+                    ⚡ Load Mumbai Demo Data
+                </button>
+            </div>
+        </div>
+
+        <!-- MAP & HEATMAP SECTION -->
+        <div class="map-section-card" style="margin-bottom:2rem; background:#fff; border-radius:12px; padding:1.2rem; box-shadow:var(--shadow);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:1rem;">
+                <div>
+                    <h3 style="margin:0; font-size:1.15rem; color:#0f172a;">🗺️ Real-Time Mumbai Grievance Map & Hotspots</h3>
+                    <p style="margin:2px 0 0; font-size:0.85rem; color:#64748b;">
+                        Markers colour-coded by hazard severity (🔴 Critical 8-10, 🟠 Medium 5-7, 🟢 Low 1-4).
+                    </p>
+                </div>
+                <div style="display:flex; gap:8px;">
+                    <button type="button" id="btnToggleHeatmap" class="btn btn-sm btn-outline">
+                        🔥 Switch to Heatmap View
+                    </button>
+                    <button type="button" id="btnResetMapView" class="btn btn-sm btn-secondary">
+                        🔄 Center Mumbai
+                    </button>
+                </div>
+            </div>
+            <div id="issuesMap" style="height:380px; width:100%; border-radius:8px; border:1px solid #cbd5e1; z-index:1;"></div>
+        </div>
+
+        <div class="content-grid">
+
+            <!-- PUBLIC ISSUES GRID -->
+            <section class="issues-feed">
+                <!-- REQUIRED ID -->
+                <div id="issuesGrid" class="issues-grid"></div>
+            </section>
+
+            <!-- SIDEBAR: WARD PERFORMANCE & LEADERBOARD -->
+            <aside class="sidebar">
+                <div class="stats-card">
+                    <h3>Ward Performance v2</h3>
+                    <p style="font-size:0.8rem; color:#64748b; margin-bottom:1rem;">
+                        Composite index based on turnaround SLA & repair verification.
+                    </p>
+                    <!-- REQUIRED ID -->
+                    <div id="wardDashboard"></div>
+                </div>
+            </aside>
+
+        </div>
+    </main>
+
+    <!-- LEAFLET SCRIPTS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+
+    <!-- FIREBASE + MODULAR SCRIPTS -->
+    <script type="module" src="firebase.js"></script>
+    <script type="module" src="issues.js"></script>
+    <script type="module" src="dashboard.js"></script>
+
+</body>
+</html>

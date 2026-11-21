@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CivicWatch | Transparent Civic Grievance & Infrastructure Triage</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">CIVIC<span>WATCH</span></a>
+            <div class="nav-links">
+                <a href="index.html" class="active">Home</a>
+                <a href="report.html">Report Issue</a>
+                <a href="issues.html">View Issues</a>
+                <a href="admin.html">Officer Portal</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="hero">
+        <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1920&q=80"
+             alt="Mumbai Civic Infrastructure"
+             class="hero-bg">
+        <div class="overlay"></div>
+
+        <div class="hero-content">
+            <h1>Transparent Civic Grievance & Infrastructure Triage</h1>
+            <p>
+                Empowering Mumbai citizens to report potholes, water leaks, and safety hazards with AI multimodal triage, live SLAs, and verifiable proof of fix.
+            </p>
+            <div class="hero-btns">
+                <a href="report.html" class="btn btn-primary">📸 Report Civic Defect</a>
+                <a href="issues.html" class="btn btn-secondary">🗺️ Public Grievance Ledger</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- LIVE IMPACT SECTION -->
+    <section class="impact-section">
+        <h2>Municipal Accountability in Numbers</h2>
+        <p style="color:#94a3b8; margin-top:0.4rem;">Real-time transparency metrics across Mumbai administrative wards</p>
+        <div class="impact-grid">
+            <div class="impact-stat-card">
+                <h3 id="impactTotalReports">42</h3>
+                <p>Public Grievances Logged</p>
+            </div>
+            <div class="impact-stat-card">
+                <h3 id="impactTotalResolved">29</h3>
+                <p>Verified Repaired Issues</p>
+            </div>
+            <div class="impact-stat-card">
+                <h3 id="impactAvgTurnaround">38 hrs</h3>
+                <p>Avg Turnaround Time</p>
+            </div>
+            <div class="impact-stat-card">
+                <h3 id="impactOverdueCount" style="color:#f87171;">3</h3>
+                <p>Active Escalated / Overdue</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- WARD PERFORMANCE SCORECARD -->
+    <section class="dashboard-container">
+        <div style="text-align:center; margin-bottom:2rem;">
+            <span class="badge-tag">Brihanmumbai Municipal Corporation</span>
+            <h2>Ward Performance Scorecard v2</h2>
+            <p style="color:#64748b; font-size:0.95rem; margin-top:0.3rem;">
+                Composite index tracking resolution efficiency, SLA compliance, and fix reliability.
+            </p>
+        </div>
+
+        <!-- REQUIRED ID FOR BACKEND -->
+        <div id="wardDashboard"></div>
+    </section>
+
+    <!-- SCRIPTS -->
+    <script type="module" src="firebase.js"></script>
+    <script type="module" src="dashboard.js"></script>
+
+</body>
+</html>

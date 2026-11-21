@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officer Control Panel | CivicWatch Mumbai</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+    <!-- NAVBAR WITH AUTH GUARD AND LOGOUT -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">CIVIC<span>WATCH</span></a>
+            <div class="nav-links">
+                <a href="index.html">Public Portal</a>
+                <a href="issues.html">Public Ledger</a>
+                <a href="admin.html" class="active">Officer Control</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ADMIN PANEL -->
+    <div class="admin-wrapper">
+        <header class="admin-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+            <div>
+                <span class="badge-tag">Brihanmumbai Municipal Corporation</span>
+                <h1>Municipal Officer Control Panel</h1>
+                <p style="color:#64748b; font-size:0.92rem; margin-top:4px;">
+                    Triage grievances, enforce turnaround SLAs, and submit AI-verified proof of fix for work completion.
+                </p>
+            </div>
+            <div class="admin-header-actions">
+                <button class="btn btn-sm btn-outline" onclick="window.location.reload()">
+                    🔄 Refresh Data
+                </button>
+            </div>
+        </header>
+
+        <div class="table-card">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th style="width:70px;">Evidence</th>
+                        <th>Grievance & AI Severity</th>
+                        <th>Ward & Dept</th>
+                        <th>Date & SLA</th>
+                        <th>Current Status</th>
+                        <th>Officer Action</th>
+                    </tr>
+                </thead>
+
+                <!-- REQUIRED ID FOR BACKEND -->
+                <tbody id="adminTableBody"></tbody>
+
+            </table>
+        </div>
+    </div>
+
+    <!-- FIREBASE + AUTH GUARD + ADMIN SCRIPTS -->
+    <script type="module" src="admin-guard.js"></script>
+    <script type="module" src="firebase.js"></script>
+    <script type="module" src="admin.js"></script>
+</body>
+</html>

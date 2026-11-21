@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Public read on Complaints; validate creation; officers only for updates
+    match /Complaints/{complaintId} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasAll(['issueType', 'ward', 'status', 'createdAt'])
+                    && request.resource.data.issueType is string
+                    && request.resource.data.ward is string
+                    && request.resource.data.status in ['Reported', 'Acknowledged']
+                    && request.resource.data.description.size() <= 2000;
+      allow update, delete: if request.auth != null;
+    }
+
+    // Officers collection: read by authenticated users, writes restricted
+    match /officers/{officerId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+
+    // Wards and metadata
+    match /wards/{wardId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+}

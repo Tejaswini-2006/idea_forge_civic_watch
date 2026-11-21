@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officer Portal Login | CivicWatch</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body class="form-page">
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">CIVIC<span>WATCH</span></a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="report.html">Report Issue</a>
+                <a href="issues.html">View Issues</a>
+                <a href="admin.html" class="active">Officer Portal</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- LOGIN FORM SECTION -->
+    <div class="form-overlay-container">
+        <img 
+            src="https://images.unsplash.com/photo-1517090504586-fde19ea6066f?auto=format&fit=crop&w=1920&q=80"
+            alt="City Infrastructure"
+            class="bg-img"
+        >
+
+        <div class="card-container">
+            <div class="form-card auth-card">
+                <div class="badge-tag">Government & Municipal Staff</div>
+                <h2>Officer Sign In</h2>
+                <p class="form-subtitle">
+                    Authorized municipal engineers, ward supervisors, and grievance triage officers.
+                </p>
+
+                <form id="adminLoginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Official Email <span>*</span></label>
+                        <input
+                            type="email"
+                            id="loginEmail"
+                            placeholder="officer@bmc.gov.in"
+                            required
+                            autocomplete="username"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loginPassword">Password <span>*</span></label>
+                        <input
+                            type="password"
+                            id="loginPassword"
+                            placeholder="Enter your security credentials"
+                            required
+                            autocomplete="current-password"
+                        >
+                    </div>
+
+                    <button type="submit" id="loginSubmitBtn" class="btn btn-primary btn-full">
+                        Sign In to Control Panel
+                    </button>
+                </form>
+
+                <div class="demo-login-box">
+                    <p class="demo-box-title">Hackathon / Pitch Evaluation</p>
+                    <p class="demo-box-sub">Click below to auto-authenticate as a verified BMC Ward Officer:</p>
+                    <button type="button" id="demoOfficerBtn" class="btn btn-demo btn-full">
+                        ⚡ Quick Login as Demo Ward Officer
+                    </button>
+                </div>
+
+                <!-- STATUS MESSAGE -->
+                <p id="loginMessage" class="form-message" role="alert" aria-live="polite"></p>
+
+                <div class="auth-card-footer">
+                    <a href="index.html">← Back to Public Transparency Portal</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT -->
+    <script type="module">
+        import { auth, db } from "./firebase.js";
+        import { 
+            signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword,
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { 
+            doc, 
+            getDoc, 
+            setDoc, 
+            Timestamp 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const form = document.getElementById("adminLoginForm");
+        const emailInput = document.getElementById("loginEmail");
+        const passwordInput = document.getElementById("loginPassword");
+        const message = document.getElementById("loginMessage");
+        const submitBtn = document.getElementById("loginSubmitBtn");
+        const demoBtn = document.getElementById("demoOfficerBtn");
+
+        // If already logged in as officer, redirect immediately
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    const snap = await getDoc(doc(db, "officers", user.uid));
+                    if (snap.exists() && snap.data().role === "officer") {
+                        window.location.replace("admin.html");
+                    }
+                } catch (e) {
+                    console.warn("Auth check error:", e);
+                }
+            }
+        });
+
+        async function verifyAndGrantOfficer(user, officerData = {}) {
+            const officerRef = doc(db, "officers", user.uid);
+            const snap = await getDoc(officerRef);
+            if (!snap.exists()) {
+                await setDoc(officerRef, {
+                    email: user.email,
+                    role: "officer",
+                    name: officerData.name || "Officer " + (user.email.split("@")[0].toUpperCase()),
+                    department: officerData.department || "BMC Roads & Infrastructure",
+                    ward: officerData.ward || "Ward A (Colaba)",
+                    createdAt: Timestamp.now()
+                });
+            } else if (snap.data().role !== "officer") {
+                await setDoc(officerRef, { role: "officer" }, { merge: true });
+            }
+        }
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Verifying Credentials...";
+            message.textContent = "";
+            message.className = "form-message";
+
+            try {
+                let userCred;
+                try {
+                    userCred = await signInWithEmailAndPassword(auth, email, password);
+                } catch (signInErr) {
+                    if (signInErr.code === "auth/user-not-found" || signInErr.code === "auth/invalid-credential") {
+                        // Allow auto-registration for demo/evaluation
+                        userCred = await createUserWithEmailAndPassword(auth, email, password);
+                    } else {
+                        throw signInErr;
+                    }
+                }
+
+                await verifyAndGrantOfficer(userCred.user);
+                message.style.color = "#16a34a";
+                message.textContent = "Authorized. Redirecting to Officer Control Panel...";
+                setTimeout(() => {
+                    window.location.href = "admin.html";
+                }, 800);
+
+            } catch (err) {
+                console.error("Login failed:", err);
+                message.style.color = "#dc2626";
+                message.textContent = "Authentication failed: " + (err.message || "Invalid credentials.");
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Sign In to Control Panel";
+            }
+        });
+
+        // Demo Quick Login
+        demoBtn.addEventListener("click", async () => {
+            demoBtn.disabled = true;
+            demoBtn.textContent = "Authenticating Demo Officer...";
+            message.textContent = "";
+
+            const demoEmail = "officer.mumbai@civicwatch.gov.in";
+            const demoPass = "OfficerBMC2026!";
+
+            try {
+                let userCred;
+                try {
+                    userCred = await signInWithEmailAndPassword(auth, demoEmail, demoPass);
+                } catch (err) {
+                    userCred = await createUserWithEmailAndPassword(auth, demoEmail, demoPass);
+                }
+
+                await verifyAndGrantOfficer(userCred.user, {
+                    name: "Executive Engineer R. Deshmukh",
+                    department: "BMC Central Grievance Cell",
+                    ward: "Ward A (Colaba/Fort)"
+                });
+
+                message.style.color = "#16a34a";
+                message.textContent = "Demo Officer Authorized. Redirecting...";
+                setTimeout(() => {
+                    window.location.href = "admin.html";
+                }, 600);
+            } catch (err) {
+                console.error("Demo login error:", err);
+                message.style.color = "#dc2626";
+                message.textContent = "Demo login failed: " + err.message;
+                demoBtn.disabled = false;
+                demoBtn.textContent = "⚡ Quick Login as Demo Ward Officer";
+            }
+        });
+    </script>
+</body>
+</html>
